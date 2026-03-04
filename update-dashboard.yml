@@ -1,0 +1,33 @@
+name: Update Pino Market Dashboard
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install pandas openpyxl requests yfinance
+
+      - name: Run updater
+        run: |
+          python pino_dashboard_updater.py --input Pino_Market_Dashboard_Auto.xlsx --output Pino_Market_Dashboard_Auto.xlsx
+
+      - name: Commit updated dashboard
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add Pino_Market_Dashboard_Auto.xlsx
+          git commit -m "Update dashboard" || echo "No changes"
+          git push
